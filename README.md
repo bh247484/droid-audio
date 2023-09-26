@@ -42,20 +42,20 @@ Many thanks to Robert Bristow-Johnson for his famous cookbook.
 
 ### Spectral Data Collection and Transformation
 
-I used an fft to transform audio signals to the frequency domain per buffer and then performed some harmonic analysis on the collected results. The fft calculations are defined [here](https://github.com/bh247484/droid-audio/blob/main/app/src/main/cpp/AudioEngine.cpp#L85-L106) in the `AudioEngine::updateSpectralData()`. More† on the fft library I used later.
+I used ffts to transform time domain audio signals to the frequency domain per buffer and then performed some harmonic analysis on the collected results. The fft calculations are defined [here](https://github.com/bh247484/droid-audio/blob/main/app/src/main/cpp/AudioEngine.cpp#L85-L106) in the `AudioEngine::updateSpectralData()`. More† on the fft library I used later.
 
-The harmonic analysis is performed [here](https://github.com/bh247484/droid-audio/blob/main/app/src/main/cpp/AudioEngine.cpp#L33-L83) in `AudioEngine::buildHexCache()` and later in that method the results are mapped to RGB color spacing and finally converted to hex color codes for use on the frontend in the view's background color gradients.
+The harmonic analysis is performed [here](https://github.com/bh247484/droid-audio/blob/main/app/src/main/cpp/AudioEngine.cpp#L33-L83) in `AudioEngine::buildHexCache()` and later in that method the results are mapped to RGB color space and finally converted to hex color codes for use on the frontend. Ultimately they're applied to the view's background color gradients so that the color corresponds to the frequency content of the synth's output signal.
 
 #### FFT Caching
 
-Ffts are computationally expensive so the results are cached instead of recomputed recalulated every buffer.
+Ffts are computationally expensive so the results are cached instead of recomputed every buffer.
 
-The caching mechanism is configurable. It tracks samples elapsed and then calculates time elapsed by scaling samples by the sampling rate. The cache resets after whatever configurable fraction of second has elapsed.
+The caching mechanism is configurable. It tracks samples elapsed in a member variable and then calculates time elapsed by scaling samples by the sampling rate. The cache resets after whatever configurable fraction of a second has elapsed.
 
-Likewise the hex color values are cached by the same mechanism.
+Likewise, the hex color values are cached by the same mechanism.
 
 #### †FFT Library
 
-For fft computation I included the `dj_fft` [header only fft library](https://github.com/jdupuy/dj_fft) (public domain/MIT licensing). The header also included multi dimensional and gpu accelerated fft methods. I removed those and included only the code I intended to invoke directly.
+For fft computation I included the `dj_fft` [header only fft library](https://github.com/jdupuy/dj_fft) (public domain/MIT licensed). The header also included multi dimensional and gpu accelerated fft methods. I removed those and included only the code I intended to invoke.
 
-Many thanks to Jonathan Dupuy for writing and sharing that concise and useful library.
+Many thanks to Jonathan Dupuy for writing and sharing that concise, useful, and intuitive library.
