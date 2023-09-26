@@ -26,7 +26,7 @@ The glue that allows native JNICALLs to be made from the Kotlin frontend is writ
 ## DSP
 ### Sawtooth Oscillator
 
-Originally I set out to create a Wavetable style sawtooth oscillator but after some research I bumped into a progressive (relatively) recently discovered method for minimal aliased sawtooth oscillators. A PDF of the research paper documenting/publishing the technique can be found [here](https://www.researchgate.net/publication/220386519_Oscillator_and_Filter_Algorithms_for_Virtual_Analog_Synthesis).
+Originally I set out to create a Wavetable style sawtooth oscillator but after some research I bumped into a progressive, (relatively) recently discovered method for minimally aliased sawtooth oscillators. A PDF of the research paper documenting/publishing the technique can be found [here](https://www.researchgate.net/publication/220386519_Oscillator_and_Filter_Algorithms_for_Virtual_Analog_Synthesis).
 
 The DPW (differentiated parabolic waveform) technique, in brief, involves computing a heavily aliased sawtooth waveform, then squaring that signal (parabolic transformation), and finally differentiating (taking a moving average of) that parabolic signal to end with a sawtooth waveform with minimal aliasing.
 
@@ -38,16 +38,24 @@ My implementation can be found in `SawOsc.cpp` [here](https://github.com/bh24748
 
 The LPF was much simpler. I used the venerable [RBJ cookbook](https://www.w3.org/TR/audio-eq-cookbook/) to create a biquad parametric lowpass filter. My implementation can be found in `LPF.cpp` [here](https://github.com/bh247484/droid-audio/blob/main/app/src/main/cpp/LPF.cpp).
 
-Thanks to Robert Bristow-Johnson for his famous cookbook.
+Many thanks to Robert Bristow-Johnson for his famous cookbook.
 
-### Spectral Data Collection
+### Spectral Data Collection and Transformation
 
-I included the `dj_fft` [header only fft library](https://github.com/jdupuy/dj_fft) (public domain/MIT licensing) for spectral analysis. The header also included multi dimensional and gpu accelerated fft methods. I removed those and included only the code I invoked directly.
+I used an fft to transform audio signals to the frequency domain per buffer and then performed some harmonic analysis on the collected results. The fft calculations are defined [here](https://github.com/bh247484/droid-audio/blob/main/app/src/main/cpp/AudioEngine.cpp#L85-L106) in the `AudioEngine::updateSpectralData()`. More† on the fft library I used later.
 
-Thanks to Jonathan Dupuy for making that concise and useful library.
+The harmonic analysis is performed [here](https://github.com/bh247484/droid-audio/blob/main/app/src/main/cpp/AudioEngine.cpp#L33-L83) in `AudioEngine::buildHexCache()` and later in that method the results are mapped to RGB color spacing and finally converted to hex color codes for use on the frontend in the view's background color gradients.
 
-I used the fft method from that library to transform the audio signals to the frequency domain per buffer.
+#### FFT Caching
 
-Ffts are computationally expensive so I cached the results so they weren't recalulated every buffer.
+Ffts are computationally expensive so the results are cached instead of recomputed recalulated every buffer.
 
-There's a configurable caching mechanism that tracks the samples elapsed 
+The caching mechanism is configurable. It tracks samples elapsed and then calculates time elapsed by scaling samples by the sampling rate. The cache resets after whatever configurable fraction of second has elapsed.
+
+Likewise the hex color values are cached by the same mechanism.
+
+#### †FFT Library
+
+For fft computation I included the `dj_fft` [header only fft library](https://github.com/jdupuy/dj_fft) (public domain/MIT licensing). The header also included multi dimensional and gpu accelerated fft methods. I removed those and included only the code I intended to invoke directly.
+
+Many thanks to Jonathan Dupuy for writing and sharing that concise and useful library.
