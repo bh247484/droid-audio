@@ -10,7 +10,9 @@ The native C++ code and DSP algorithms are located [here](https://github.com/bh2
 
 # What does it look and sound like?
 
---insert video
+https://github.com/bh247484/droid-audio/assets/57693937/82beefbf-031c-4fb6-82f6-4f8377299bed
+
+**Attn**: Github mutes embeds by default. Be sure to unmute the above video.
 
 # How does it work?
 
