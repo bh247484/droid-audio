@@ -30,9 +30,11 @@ The native JNICALL glue that allows data to pass between the front (Kotlin) and 
 
 Originally I set out to create a Wavetable style sawtooth oscillator but after some research I bumped into a compelling, progressive method for producing minimally aliased sawtooth waveforms. A PDF of the research paper documenting/publishing the technique can be found [here](https://www.researchgate.net/publication/220386519_Oscillator_and_Filter_Algorithms_for_Virtual_Analog_Synthesis).
 
-In brief, the DPW (differentiated parabolic waveform) algorithm computes a heavily aliased sawtooth waveform, then squares that signal (parabolic transformation), and finally differentiates (takes the moving average of) that parabolic signal to reproduce the sawtooth waveform. This time with minimal aliasing.
+The sawtooth oscillator's output is a DPW, a differentiated polynomial (or more specifically in this case, parabolic) waveform.
 
-DPW can also be applied to square, pulse, triangle and other waveforms whose odd harmonics suffer from aliasing in their higher frequencies.
+In brief, the algorithm computes a heavily aliased "naive" sawtooth waveform, then squares that signal (parabolic transformation), and finally differentiates (takes the moving average of) that parabolic signal to reproduce the sawtooth waveform. This time with minimal aliasing.
+
+Higher order polynomial transformations (cubic, quartic, etc) can reduce high frequency aliasing even further but since this synth is limited to the bass register (at most A2 or `110.00hz`) the extra cpu cycles would be wasted here.
 
 My implementation can be found in `SawOsc.cpp` [here](https://github.com/bh247484/droid-audio/blob/main/app/src/main/cpp/SawOsc.cpp). Many thanks to Vesa Välimäki, the originator of the technique, for sharing/publishing his discovery.
 
