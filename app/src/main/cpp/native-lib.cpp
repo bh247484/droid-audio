@@ -25,7 +25,7 @@ Java_com_example_droidaudio_MainActivity_setFreq(
         jobject /* this */,
         jfloat value,
         jint screenWidth) {
-    // Map incoming screen x position between midi notes 33 (55.00hz - A1) and 57 (220.00hz - A3).
+    // Map incoming screen x position between midi notes 33 (55.00hz - A1) and 45 (110.00hz - A2).
     // Midi note to frequency relationship also helps us convert to logarithmic space, which better matches human perceptual hearing.
     int midiNote = (int)((value / screenWidth) * (45.0f - 33.0f) + 33.0f);
     float newFreq = (440.0f / 32.0f) * std::pow(((float) midiNote - 9.0f) / 12.0f , 2.0f);
